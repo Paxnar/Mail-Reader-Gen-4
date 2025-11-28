@@ -65,6 +65,8 @@ def paste_text_onto_image(bg=None, text="ADVENTURE!\nEXCITED!", colors=None, lin
     x = o_x
     y = o_y
     for letter in text:
+        if letter == '’':
+            letter = "'"
         if letter == '\n':
             x = o_x
             y += 16
