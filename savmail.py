@@ -97,17 +97,11 @@ class MAIL:
              bytereaders.read16(self.data, 0x24 + mail_ind * 8), bytereaders.read16(self.data, 0x26 + mail_ind * 8)]
             for mail_ind in range(3)]
         self.mons = []
+        formdata = bytereaders.read16(self.data, 0x1c + 2)
+        self.formdata = [(formdata >> 10) & 0x1f, (formdata >> 5) & 0x1f, formdata & 0x1f]
         for poke_ind in range(3):
             offs = 0x1C - 2 * poke_ind
-            if bytereaders.read8(self.data, offs + 1) == 0x20:
-                self.mons.append(bytereaders.read8(self.data, offs) - 7)
-            elif bytereaders.read16(self.data, offs) == 0xffff:
-                self.mons.append('idk')
-            else:
-                if self.version == "HGSS":
-                   self.mons.append(bytereaders.read16(self.data, offs) - 7)
-                elif self.version == 'DP' or self.version == 'Pt':
-                    self.mons.append(bytereaders.read8(self.data, offs) - 7 + 256)
+            self.mons.append((bytereaders.read16(self.data, offs) & 0xfff) - 7)
         self.actual_messages = self.convert_messages(self.messages)
 
     def convert_messages(self, messages: list, lang=None):
@@ -134,7 +128,7 @@ class MAIL:
         text_handling.paste_text_onto_image(bg, self.name, enums.mail_colors[self.type], 0, (168, 161))
         x = 32
         for i in self.mons:
-            if i == 'idk':
+            if i == 0xfff - 7:
                 x += 40
             else:
                 icon: Image.Image = Image.open(f'sprites/{i:04d}.png').convert('RGBA')

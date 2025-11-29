@@ -1,6 +1,5 @@
 import struct
 
-
 def readlittleendian(data, offset, amount: int = 1):
     rd = {1: '<B', 2: '<H', 4: '<I'}
     byteslist = data[offset:amount + offset]
